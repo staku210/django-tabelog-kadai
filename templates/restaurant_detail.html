@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}店舗詳細{% endblock %}
+
+<body>
+  {% block main %}
+  <h1>店舗詳細</h1>
+  <p>{{ restaurant.name }}</p>
+  <p>{{ restaurant.price }}</p>
+  <img src="{{ restaurant.img.url }}" style="width:100px height:100px;">
+  <P>{{ restaurant.address }}</P>
+  <a href="{% url 'list' %}">戻る</a>
+  {% endblock %}
+</body>

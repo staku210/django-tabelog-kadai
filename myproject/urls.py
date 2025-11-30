@@ -22,7 +22,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.RestaurantListView.as_view(),name="list"),
+    path('list/',views.RestaurantListView.as_view(),name="list"),
+    path('list/detail/<int:pk>/',views.RestaurantDetailView.as_view(),name='detail')
 ]
 
 if settings.DEBUG:
