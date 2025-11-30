@@ -9,6 +9,8 @@
    <p>{{ restaurant.price }}</p>
    <img src="{{ restaurant.img.url }}" style="width:100px height:100px;">
    <button class="btn btn-success" onclick="location.href='{% url 'detail' pk=restaurant.pk %}'">詳細</button>
+   <button class="btn btn-success" onclick="location.href=''">レビュー</button>
+   <button class="btn btn-success" onclick="location.href=''">予約</button>
    {% endfor %}
 {% endblock %}
 </body>
