@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from crud import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,6 +25,7 @@ urlpatterns = [
     path('',views.RestaurantListView.as_view(),name="list"),
     path('detail/<int:pk>/',views.RestaurantDetailView.as_view(),name='detail'),
     path('category/<int:category_id>',views.category,name='category'),
+    path('accounts/',include('crud.urls')),
 ]
 
 if settings.DEBUG:
