@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Restaurant,Category,Review
+from .models import Restaurant,Category,Review,Reservation
 from django.utils.safestring import mark_safe
 
 # Register your models here.
@@ -20,8 +20,14 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ('restaurant', 'rating', 'created_at')
     search_fields = ('user__username', 'comment')
 
+class ReservationAdmin(admin.ModelAdmin):
+   list_display=('restaurant','user','date','time','number_of_people')
+   list_filter=('restaurant','user','date','time')
+   search_fields=('user__username','restaurant')
+
 
 admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(Review,ReviewAdmin)
+admin.site.register(Reservation,ReservationAdmin)
 

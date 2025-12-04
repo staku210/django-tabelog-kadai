@@ -27,3 +27,14 @@ class Review(models.Model):
 
   def __str__(self):
     return f"{self.user.username} - {self.restaurant.name}"
+
+
+class Reservation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    number_of_people = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.restaurant.name} ({self.date} {self.time})"

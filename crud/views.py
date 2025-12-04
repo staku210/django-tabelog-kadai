@@ -2,7 +2,7 @@ from django.shortcuts import render,get_object_or_404,redirect
 from django.views.generic import ListView,DetailView
 from .models import Restaurant,Category
 from django.contrib.auth import authenticate,login,logout
-from .forms import SignupForm,LoginForm,ReviewForm
+from .forms import SignupForm,LoginForm,ReviewForm,ReservationForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -84,3 +84,22 @@ def restaurant_review(request,restaurant_id):
         'reviews': reviews,
         'form': form,
     })
+
+@login_required
+def reservation(request,restaurant_id):
+    restaurant=get_object_or_404(Restaurant,id=restaurant_id)
+
+    if request.method == 'POST':
+        form = ReservationForm(request.POST)
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.user = request.user
+            reservation.restaurant=restaurant #自動的に店舗を紐づけ
+            reservation.save()
+            return redirect('reservation_success')
+    else:
+        form = ReservationForm()
+    return render(request, 'reservation.html', {'form': form,'restaurant':restaurant})
+
+def reservation_success(request):
+    return render(request, 'reservation_success.html')
