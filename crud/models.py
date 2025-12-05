@@ -38,3 +38,10 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.restaurant.name} ({self.date} {self.time})"
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'restaurant')  # 重複登録を防止

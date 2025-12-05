@@ -10,6 +10,18 @@
    <img src="{{ restaurant.img.url }}" style="width:100px height:100px;">
    <button class="btn btn-success" onclick="location.href='{% url 'detail' pk=restaurant.pk %}'">詳細</button>
    <button class="btn btn-success" onclick="location.href='{% url 'reservation' restaurant_id=restaurant.pk %}'">予約</button>
+   {% if user.is_authenticated %}
+   <form action="{% url 'favorite' restaurant.id %}" method="post">
+      {% csrf_token %}
+      <button class="btn btn-success" type="submit">
+         {% if restaurant.is_favorited %}
+         お気に入り解除
+         {% else %}
+         お気に入り登録
+         {% endif %}
+      </button>
+   </form>
+   {% endif %}
    {% endfor %}
    <br>
 

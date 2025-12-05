@@ -1,6 +1,6 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.views.generic import ListView,DetailView
-from .models import Restaurant,Category
+from .models import Restaurant,Category,Favorite
 from django.contrib.auth import authenticate,login,logout
 from .forms import SignupForm,LoginForm,ReviewForm,ReservationForm,SearchForm
 from django.contrib.auth.decorators import login_required
@@ -11,10 +11,20 @@ class RestaurantListView(ListView):
   model=Restaurant
   template_name = "restaurant_list.html"
 
+  def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.is_authenticated:
+            # 各レストランに `is_favorited` フラグを追加
+            favorites = Favorite.objects.filter(user=self.request.user).values_list('restaurant_id', flat=True)
+            for restaurant in queryset:
+                restaurant.is_favorited = restaurant.id in favorites
+        return queryset
+
   def get_context_data(self, **kwargs):
     context=super().get_context_data(**kwargs)
     context['categories'] = Category.objects.all()
     return context
+
 
 class RestaurantDetailView(DetailView):
   model=Restaurant
@@ -28,6 +38,7 @@ class RestaurantDetailView(DetailView):
         context['form'] = ReviewForm()
         return context
 
+
 def category(request,category_id):
   category=get_object_or_404(Category,id=category_id)
   restaurants=category.restaurants.all()
@@ -35,6 +46,7 @@ def category(request,category_id):
     'category':category,
     'restaurants':restaurants,
   })
+
 
 def signup_view(request):
     if request.method == "POST":
@@ -49,6 +61,7 @@ def signup_view(request):
         form = SignupForm()
     return render(request, 'signup.html', {'form': form})
 
+
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
@@ -60,9 +73,11 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+
 def logout_view(request):
     logout(request)
     return redirect('/')
+
 
 @login_required
 def restaurant_review(request,restaurant_id):
@@ -86,6 +101,7 @@ def restaurant_review(request,restaurant_id):
         'form': form,
     })
 
+
 @login_required
 def reservation(request,restaurant_id):
     restaurant=get_object_or_404(Restaurant,id=restaurant_id)
@@ -105,6 +121,7 @@ def reservation(request,restaurant_id):
 def reservation_success(request):
     return render(request, 'reservation_success.html')
 
+
 def search_view(request):
     form = SearchForm(request.GET or None)
     query = ''
@@ -122,3 +139,13 @@ def search_view(request):
         'query': query,
         'results': results,
     })
+
+
+@login_required
+def toggle_favorite(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    favorite, created = Favorite.objects.get_or_create(user=request.user, restaurant=restaurant)
+
+    if not created:
+        favorite.delete()  # 登録済みなら解除
+    return redirect('list')

@@ -29,7 +29,8 @@ urlpatterns = [
     path('review/<int:restaurant_id>/', views.restaurant_review, name='review'),
     path('reservation/<int:restaurant_id>/',views.reservation,name='reservation'),
     path('reservation-success/',views.reservation_success,name='reservation_success'),
-    path('search/',views.search_view,name='search')
+    path('search/',views.search_view,name='search'),
+    path('favorite/<int:restaurant_id>/',views.toggle_favorite,name='favorite'),
 ]
 
 if settings.DEBUG:
