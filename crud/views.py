@@ -149,3 +149,15 @@ def toggle_favorite(request, restaurant_id):
     if not created:
         favorite.delete()  # 登録済みなら解除
     return redirect('list')
+
+
+@login_required
+def account_view(request):
+    user=request.user
+    favorite=Favorite.objects.filter(user=user).select_related('restaurant')
+
+    context={
+        'user':user,
+        'favorite':favorite,
+    }
+    return render(request,'account.html',context)

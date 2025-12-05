@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}アカウント情報{% endblock %}
+
+{% block main %}
+<h1>アカウント情報</h1>
+<p>ユーザー名： {{ user.name }}</p>
+<p>メールアドレス： {{ user.email }}</p>
+
+<h2>お気に入り登録した店舗</h2>
+<ul>
+  {% for favorite in favorite %}
+    <li>{{ favorite.restaurant.name }}</li>
+    <li>
+      <img src="{{ favorite.restaurant.img.url }}" style="width:100px height:100px;">
+    </li>
+  {% empty %}
+    <li>お気に入り店舗はありません。</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'list' %}">← 店舗一覧に戻る</a>
+{% endblock %}
