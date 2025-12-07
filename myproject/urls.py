@@ -36,6 +36,7 @@ urlpatterns = [
     path('account/edit/',views.user_edit_view,name='user_edit'),
     path('account/password/',views.password_reset_view,name='password_reset'),
     path('reviews/<int:pk>/edit/',views.ReviewUpdateView.as_view(),name="review_update"),
+    path('reviews/<int:pk>/delete/',views.ReviewDeleteView.as_view(),name="review_delete"),
 ]
 
 if settings.DEBUG:

@@ -118,7 +118,7 @@ def restaurant_review(request,restaurant_id):
             review.restaurant = restaurant
             review.user = request.user
             review.save()
-            return redirect('restaurant_detail', restaurant_id=restaurant.id)
+            return redirect('detail', pk=restaurant.pk)
      else:
         form = ReviewForm()
 
@@ -142,6 +142,16 @@ class ReviewUpdateView(UpdateView):
         qs=super().get_queryset()
         return qs.filter(user=self.request.user)
 
+class ReviewDeleteView(DeleteView):
+    model=Review
+    template_name="review_delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy('detail',kwargs={'pk':self.object.restaurant.id})
+    
+    def get_queryset(self):
+        qs=super().get_queryset()
+        return qs.filter(user=self.request.user)
 
 
 @login_required

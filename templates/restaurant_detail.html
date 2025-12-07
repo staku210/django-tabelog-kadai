@@ -19,7 +19,8 @@
             <small>{{ review.created_at }}</small><br>
 
             {% if review.user.id == request.user.id %}
-            <a href="{% url 'review_update' review.id %}">レビューを編集</a>
+            <a href="{% url 'review_update' review.pk %}">レビューを編集</a><br>
+            <a href="{% url 'review_delete' review.pk %}">レビューを削除</a>
             {% endif %}
         </li>
     {% empty %}
@@ -31,7 +32,7 @@
   <form method="post" action="{% url 'review' restaurant.id %}">
      {% csrf_token %}
      {{ form.as_p }}
-     <button type="submit">送信</button>
+     <button type="submit">投稿する</button>
   </form>
   <a href="{% url 'list' %}">戻る</a>
   {% endblock %}
