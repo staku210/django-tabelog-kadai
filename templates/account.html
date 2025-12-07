@@ -3,8 +3,10 @@
 
 {% block main %}
 <h2>アカウント情報</h2>
-<p>ユーザー名： {{ user.name }}</p>
+<p>ユーザー名： {{ user.username }}</p>
 <p>メールアドレス： {{ user.email }}</p>
+<a href="{% url 'user_edit' %}">アカウント情報を編集する</a><br>
+<a href="{% url 'password_reset' %}">パスワードをリセットする</a>
 
 <h2>予約履歴一覧</h2>
 {% for reservation in reservations %}

@@ -1,11 +1,12 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.views.generic import ListView,DetailView,DeleteView
 from .models import Restaurant,Category,Favorite,Reservation
-from django.contrib.auth import authenticate,login,logout
-from .forms import SignupForm,LoginForm,ReviewForm,ReservationForm,SearchForm
+from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
+from .forms import SignupForm,LoginForm,ReviewForm,ReservationForm,SearchForm,UserEditForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls import reverse_lazy
+from django.contrib.auth.forms import PasswordChangeForm
 
 # Create your views here.
 class RestaurantListView(ListView):
@@ -78,6 +79,30 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+
+@login_required
+def user_edit_view(request):
+    if request.method=='POST':
+        form=UserEditForm(request.POST,instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('account')
+    else:
+        form=UserEditForm(instance=request.user)
+    return render(request,'user_edit.html',{'form':form})
+
+@login_required
+def password_reset_view(request):
+    if request.method=='POST':
+        form=PasswordChangeForm(user=request.user,data=request.POST)
+        if form.is_valid():
+            user=form.save()
+            update_session_auth_hash(request,user) #ログアウトされないようにする
+            return redirect('account')
+    else:
+            form=PasswordChangeForm(user=request.user)
+    return render(request,'password_reset.html',{'form':form})
 
 
 @login_required

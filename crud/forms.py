@@ -12,6 +12,11 @@ class SignupForm(forms.ModelForm):
 class LoginForm(AuthenticationForm):
     pass
 
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['username','email']
+
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review

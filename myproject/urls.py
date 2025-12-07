@@ -33,6 +33,8 @@ urlpatterns = [
     path('favorite/<int:restaurant_id>/',views.toggle_favorite,name='favorite'),
     path('account/',views.account_view,name='account'),
     path('reservation/<int:pk>/delete/',views.ReservationDeleteView.as_view(),name="reservation_delete"),
+    path('account/edit/',views.user_edit_view,name='user_edit'),
+    path('account/password/',views.password_reset_view,name='password_reset'),
 ]
 
 if settings.DEBUG:
