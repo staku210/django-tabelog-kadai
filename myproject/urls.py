@@ -35,6 +35,7 @@ urlpatterns = [
     path('reservation/<int:pk>/delete/',views.ReservationDeleteView.as_view(),name="reservation_delete"),
     path('account/edit/',views.user_edit_view,name='user_edit'),
     path('account/password/',views.password_reset_view,name='password_reset'),
+    path('reviews/<int:pk>/edit/',views.ReviewUpdateView.as_view(),name="review_update"),
 ]
 
 if settings.DEBUG:

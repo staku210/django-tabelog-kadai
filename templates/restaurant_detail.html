@@ -16,7 +16,11 @@
         <li>
             <strong>{{ review.user.username }}</strong> (評価: {{ review.rating }})<br>
             {{ review.comment }}<br>
-            <small>{{ review.created_at }}</small>
+            <small>{{ review.created_at }}</small><br>
+
+            {% if review.user.id == request.user.id %}
+            <a href="{% url 'review_update' review.id %}">レビューを編集</a>
+            {% endif %}
         </li>
     {% empty %}
         <li>レビューはまだありません。</li>

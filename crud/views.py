@@ -1,12 +1,13 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from django.views.generic import ListView,DetailView,DeleteView
-from .models import Restaurant,Category,Favorite,Reservation
+from django.views.generic import ListView,DetailView,DeleteView,UpdateView
+from .models import Restaurant,Category,Favorite,Reservation,Review
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from .forms import SignupForm,LoginForm,ReviewForm,ReservationForm,SearchForm,UserEditForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import PasswordChangeForm
+from .forms import ReviewForm
 
 # Create your views here.
 class RestaurantListView(ListView):
@@ -126,6 +127,21 @@ def restaurant_review(request,restaurant_id):
         'reviews': reviews,
         'form': form,
     })
+
+
+class ReviewUpdateView(UpdateView):
+    model=Review
+    form_class=ReviewForm
+    template_name="review_update_form.html"
+
+    def get_success_url(self):
+        return reverse_lazy('detail',kwargs={'pk':self.object.restaurant.id})
+    
+    def get_queryset(self):
+        #ログインユーザーのレビューのみ編集可能にする
+        qs=super().get_queryset()
+        return qs.filter(user=self.request.user)
+
 
 
 @login_required
