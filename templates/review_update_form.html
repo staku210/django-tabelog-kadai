@@ -1,6 +1,51 @@
-<h2>レビュー編集</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">更新</button>
-</form>
+{% extends "base.html" %}
+{% block title %}レビュー編集{% endblock %}
+
+{% block main %}
+<div class="container mt-5" style="max-width: 520px;">
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <h3 class="text-center fw-bold mb-4">レビュー編集</h3>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <!-- 評価 -->
+        <div class="mb-3">
+          {{ form.rating.label_tag }}
+          {{ form.rating }}
+        </div>
+
+        <!-- コメント -->
+        <div class="mb-4">
+          {{ form.comment.label_tag }}
+          {{ form.comment }}
+        </div>
+
+        <!-- エラーメッセージ -->
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            入力内容にエラーがあります。修正してください。
+          </div>
+        {% endif %}
+
+        <!-- ボタン -->
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary w-50">
+            更新する
+          </button>
+          <a href="{% url 'list' %}" class="btn btn-outline-secondary w-50">
+            キャンセル
+          </a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+

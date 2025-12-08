@@ -1,9 +1,29 @@
 {% extends "base.html" %}
 {% block title %}予約完了{% endblock %}
 
-<body>
 {% block main %}
-<h1>予約が完了しました。</h1>
-<a href="{% url 'list' %}">← 店舗一覧に戻る</a>
+<div class="container mt-5" style="max-width: 600px;">
+
+  <div class="card shadow-sm">
+    <div class="card-body text-center">
+
+      <!-- 完了アイコン風 -->
+      <div class="mb-3" style="font-size: 60px;">✅</div>
+
+      <h3 class="fw-bold mb-3">予約が完了しました</h3>
+
+      <p class="text-muted mb-4">
+        ご予約ありがとうございます。<br>
+        当日のご来店をお待ちしております。
+      </p>
+
+      <!-- 戻るボタン -->
+      <a href="{% url 'list' %}" class="btn btn-outline-dark w-100">
+        ← 店舗一覧に戻る
+      </a>
+
+    </div>
+  </div>
+
+</div>
 {% endblock %}
-</body>

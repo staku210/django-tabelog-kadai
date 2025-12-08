@@ -2,12 +2,41 @@
 {% block title %}レビュー削除{% endblock %}
 
 {% block main %}
-  <h2>このレビューを削除しますか？</h2>
-  <p>{{ object.comment }}</p>
+<div class="container mt-5" style="max-width: 520px;">
 
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit">削除する</button>
-    <a href="{% url 'detail' object.restaurant.id %}">キャンセル</a>
-  </form>
+  <div class="card shadow-sm border-danger">
+    <div class="card-body text-center">
+
+      <h3 class="fw-bold text-danger mb-4">
+        ⚠ このレビューを削除しますか？
+      </h3>
+
+      <!-- レビュー内容 -->
+      <div class="text-start mb-4">
+        <p class="mb-2"><strong>内容：</strong></p>
+        <p class="border rounded p-3 bg-light">
+          {{ object.comment }}
+        </p>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="d-flex gap-3">
+          <button type="submit" class="btn btn-danger w-50">
+            削除する
+          </button>
+
+          <a href="{% url 'detail' object.restaurant.id %}"
+             class="btn btn-outline-secondary w-50">
+            キャンセル
+          </a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
 {% endblock %}
+

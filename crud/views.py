@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import PasswordChangeForm
-from .forms import ReviewForm
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -185,11 +184,12 @@ def reservation(request,restaurant_id):
         form = ReservationForm()
     return render(request, 'reservation.html', {'form': form,'restaurant':restaurant})
 
+@login_required
 @premium_required
 def reservation_success(request):
     return render(request, 'reservation_success.html')
 
-@method_decorator([login_required, premium_required], name='dispatch')
+@method_decorator([login_required], name='dispatch')
 class ReservationDeleteView(DeleteView):
     model=Reservation
     template_name='reservation_delete.html'
@@ -220,25 +220,32 @@ def search_view(request):
 
 
 @login_required
-@premium_required
 def toggle_favorite(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-    favorite, created = Favorite.objects.get_or_create(user=request.user, restaurant=restaurant)
+    favorite = Favorite.objects.filter(user=request.user, restaurant=restaurant).first()
 
-    if not created:
-        favorite.delete()  # 登録済みなら解除
-    return redirect('list')
+    # すでに登録済み → 無料でも解除できる
+    if favorite:
+        favorite.delete()
+        return redirect(request.META.get('HTTP_REFERER', 'list'))
+
+    # 未登録 → プレミアム会員のみ登録可能
+    if not request.user.is_premium:
+        return redirect('account')  # または課金誘導ページ
+
+    Favorite.objects.create(user=request.user, restaurant=restaurant)
+    return redirect(request.META.get('HTTP_REFERER', 'list'))
 
 
 @login_required
 def account_view(request):
     user=request.user
     favorites=Favorite.objects.filter(user=user).select_related('restaurant')
-    reservation=Reservation.objects.filter(user=user).select_related('restaurant')
+    reservations=Reservation.objects.filter(user=user).select_related('restaurant')
     return render(request, 'account.html', {
         'user': user,
         'favorites': favorites,
-        'reservations': reservation,
+        'reservations': reservations,
     })
 
 
@@ -307,6 +314,12 @@ def cancel_subscription(request):
         subscriptions = stripe.Subscription.list(customer=user.stripe_customer_id)
         for sub in subscriptions.data:
             stripe.Subscription.delete(sub.id)  # サブスクリプションをキャンセル
+
+        # ✅ プレミアム作成データを全削除
+        Favorite.objects.filter(user=user).delete()
+        Reservation.objects.filter(user=user).delete()
+        Review.objects.filter(user=user).delete()
+
         # Django 側のフラグを更新
         user.is_premium = False
         user.save()

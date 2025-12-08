@@ -1,12 +1,54 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block title %}会員情報の編集{% endblock %}
 
 {% block main %}
-<h2>会員情報の編集</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-primary">保存</button>
-</form>
-<a href="{% url 'account' %}">← 戻る</a>
+<div class="container mt-5" style="max-width: 520px;">
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <h3 class="text-center fw-bold mb-4">会員情報の編集</h3>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <!-- フォーム入力 -->
+        <div class="mb-3">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+        </div>
+
+        {% if form.email %}
+        <div class="mb-3">
+          {{ form.email.label_tag }}
+          {{ form.email }}
+        </div>
+        {% endif %}
+
+        <!-- エラー表示 -->
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            入力内容に不備があります。修正してください。
+          </div>
+        {% endif %}
+
+        <!-- 保存ボタン -->
+        <button type="submit" class="btn btn-primary w-100 mb-3">
+          保存する
+        </button>
+
+      </form>
+
+      <!-- 戻る -->
+      <div class="text-center">
+        <a href="{% url 'account' %}" class="btn btn-outline-dark btn-sm">
+          ← 戻る
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
 {% endblock %}
+

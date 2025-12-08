@@ -1,6 +1,49 @@
-<h2>ログイン</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">ログイン</button>
-</form>
+{% extends "base.html" %}
+{% block title %}ログイン{% endblock %}
+
+{% block main %}
+<div class="container mt-5" style="max-width: 500px;">
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <h3 class="text-center fw-bold mb-4">ログイン</h3>
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- フォーム -->
+        <div class="mb-3">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+        </div>
+
+        <!-- エラーメッセージ -->
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            ログインに失敗しました。ユーザー名またはパスワードが違います。
+          </div>
+        {% endif %}
+
+        <!-- ログインボタン -->
+        <button type="submit" class="btn btn-success w-100">
+          ログイン
+        </button>
+
+      </form>
+
+      <!-- 補助リンク -->
+      <div class="text-center mt-2">
+        <a href="{% url 'signup' %}">新規登録はこちら</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

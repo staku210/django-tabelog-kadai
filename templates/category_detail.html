@@ -1,13 +1,57 @@
 {% extends "base.html" %}
 {% block title %}{{ category.name }}一覧{% endblock %}
 
-<body>
-  {% block main %}
-  <h1>{{ category.name }}一覧</h1>
-  {% for restaurant in restaurants %}
-  <p>{{ restaurant.name }}</p>
-  <p>{{ restaurant.price }}</p>
-  <img src="{{ restaurant.img.url }}" style="width:100px height:100px;">
-  {% endfor %}
-  {% endblock %}
-</body>
+{% block main %}
+<div class="container mt-5">
+
+  <!-- タイトル -->
+  <h2 class="fw-bold mb-4">{{ category.name }} の店舗一覧</h2>
+
+  <div class="row">
+    {% for restaurant in restaurants %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+
+          <!-- 店舗画像 -->
+          <img src="{{ restaurant.img.url }}"
+               class="card-img-top"
+               style="height:220px; object-fit:cover;">
+
+          <div class="card-body d-flex flex-column">
+
+            <!-- 店名 -->
+            <h5 class="fw-bold">{{ restaurant.name }}</h5>
+
+            <!-- 価格 -->
+            <p class="text-muted mb-2">💰 ¥{{ restaurant.price }}</p>
+
+            <!-- ボタン -->
+            <div class="mt-auto">
+              <a href="{% url 'detail' pk=restaurant.pk %}"
+                 class="btn btn-outline-primary btn-sm w-100 mb-2">
+                詳細を見る
+              </a>
+
+              <a href="{% url 'reservation' restaurant_id=restaurant.pk %}"
+                 class="btn btn-outline-success btn-sm w-100">
+                予約する
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">このカテゴリの店舗はまだありません。</p>
+    {% endfor %}
+  </div>
+
+  <!-- 戻るボタン -->
+  <div class="text-center mt-4">
+    <a href="{% url 'list' %}" class="btn btn-outline-dark">
+      ← 店舗一覧へ戻る
+    </a>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,24 +1,62 @@
 {% extends "base.html" %}
 {% block title %}予約{% endblock %}
 
-<body>
 {% block main %}
-<h2>{{ restaurant.name }}の予約</h2>
-<form method="post">
-  {% csrf_token %}
-  <div class="form-group">
-    <label for="id_date">予約日</label>
-    {{ form.date }}
+<div class="container mt-5" style="max-width: 520px;">
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <!-- タイトル -->
+      <h3 class="fw-bold text-center mb-4">
+        {{ restaurant.name }} の予約
+      </h3>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <!-- 予約日 -->
+        <div class="mb-3">
+          <label for="id_date" class="form-label fw-bold">予約日</label>
+          {{ form.date }}
+        </div>
+
+        <!-- 予約時間 -->
+        <div class="mb-3">
+          <label for="id_time" class="form-label fw-bold">予約時間</label>
+          {{ form.time }}
+        </div>
+
+        <!-- 人数 -->
+        <div class="mb-4">
+          <label for="id_number_of_people" class="form-label fw-bold">人数</label>
+          {{ form.number_of_people }}
+        </div>
+
+        <!-- エラー表示 -->
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            入力内容に不備があります。修正してください。
+          </div>
+        {% endif %}
+
+        <!-- 予約ボタン -->
+        <button type="submit" class="btn btn-success w-100 mb-3">
+          予約する
+        </button>
+
+      </form>
+
+      <!-- 戻る -->
+      <div class="text-center">
+        <a href="{% url 'detail' pk=restaurant.pk %}" class="btn btn-outline-dark btn-sm">
+          ← 店舗詳細へ戻る
+        </a>
+      </div>
+
+    </div>
   </div>
-  <div class="form-group">
-    <label for="id_time">予約時間</label>
-    {{ form.time }}
-  </div>
-  <div class="form-group">
-    <label for="id_number_of_people">人数</label>
-    {{ form.number_of_people }}
-  </div>
-  <button type="submit" class="btn-primary">予約する</button>
-</form>
+
+</div>
 {% endblock %}
-</body>
+

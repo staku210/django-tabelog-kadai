@@ -1,6 +1,59 @@
-<h2>新規登録</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">登録</button>
-</form>
+{% extends "base.html" %}
+{% block title %}新規登録{% endblock %}
+
+{% block main %}
+<div class="container mt-5" style="max-width: 520px;">
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <h3 class="text-center fw-bold mb-4">新規登録</h3>
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- ユーザー名 -->
+        <div class="mb-3">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+        </div>
+
+        <!-- メール -->
+        {% if form.email %}
+        <div class="mb-3">
+          {{ form.email.label_tag }}
+          {{ form.email }}
+        </div>
+        {% endif %}
+
+        <!-- パスワード -->
+        <div class="mb-3">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+        </div>
+
+        <!-- エラーメッセージ -->
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            入力内容にエラーがあります。修正してください。
+          </div>
+        {% endif %}
+
+        <!-- 登録ボタン -->
+        <button type="submit" class="btn btn-success w-100">
+          登録する
+        </button>
+
+      </form>
+
+      <!-- 補助リンク -->
+      <div class="text-center mt-3">
+        <a href="{% url 'login' %}">すでにアカウントをお持ちの方はこちら</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+

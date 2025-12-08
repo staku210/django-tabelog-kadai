@@ -2,52 +2,104 @@
 {% block title %}アカウント情報{% endblock %}
 
 {% block main %}
-<h2>アカウント情報</h2>
-<p>ユーザー名： {{ user.username }}</p>
-<p>メールアドレス： {{ user.email }}</p>
-<a href="{% url 'user_edit' %}">アカウント情報を編集する</a><br>
-<a href="{% url 'password_reset' %}">パスワードをリセットする</a>
+<div class="container mt-5">
 
-{% if not user.is_premium %}
-  <p>現在は無料会員です。</p>
-  <form action="{% url 'create-checkout-session' %}" method="POST">
-    {% csrf_token %}
-    <button type="submit">有料会員になる</button>
-  </form>
-{% else %}
-  <p>✅ あなたは有料会員です！</p>
-{% endif %}
+  <!-- アカウント情報 -->
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <h4 class="fw-bold mb-3">アカウント情報</h4>
 
-{% if user.is_premium %}
-  <form action="{% url 'cancel_subscription' %}" method="post">
-    {% csrf_token %}
-    <button class="btn btn-danger" type="submit">有料会員を退会する</button>
-  </form>
-{% endif %}
+      <p><strong>ユーザー名：</strong>{{ user.username }}</p>
+      <p><strong>メールアドレス：</strong>{{ user.email }}</p>
 
-<h2>予約履歴一覧</h2>
-{% for reservation in reservations %}
-  <div style="margin-bottom: 10px;">
-    <p>店舗名：{{ reservation.restaurant.name }}</p>
-    <p>日付：{{ reservation.date }}</p>
-    <p>時間：{{ reservation.time }}</p>
-    <p>人数：{{ reservation.number_of_people }}</p>
-    <a href="{% url 'reservation_delete' reservation.pk %}" class="btn btn-danger">キャンセル</a>
+      <div class="d-flex gap-2 mb-3">
+        <a href="{% url 'user_edit' %}" class="btn btn-outline-primary btn-sm">編集</a>
+        <a href="{% url 'password_reset' %}" class="btn btn-outline-secondary btn-sm">パスワード変更</a>
+      </div>
+
+      {% if not user.is_premium %}
+        <div class="alert alert-warning">
+          現在は <strong>無料会員</strong> です。
+        </div>
+
+        <form action="{% url 'create-checkout-session' %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success w-100">
+            有料会員になる
+          </button>
+        </form>
+        <p>有料会員はお気に入り登録、レビュー投稿、店舗予約が可能になります。</p>
+      {% else %}
+        <div class="alert alert-success">
+          ✅ あなたは <strong>有料会員</strong> です！
+        </div>
+
+        <form action="{% url 'cancel_subscription' %}" method="post">
+          {% csrf_token %}
+          <button class="btn btn-danger w-100" type="submit">
+            有料会員を退会する
+          </button>
+        </form>
+      {% endif %}
+    </div>
   </div>
-{% empty %}
-  <p>予約履歴はありません。</p>
-{% endfor %}
 
-<h2>お気に入り登録した店舗</h2>
-  {% for favorite in favorites %}
-    <p>{{ favorite.restaurant.name }}</p>
-    <img src="{{ favorite.restaurant.img.url }}" style="width:100px height:100px;">
-    <p>{{ favorite.restaurant.price }}</p>
-    <p>{{ favorite.restaurant.address }}</p>
-    <p>{{ favorite.restaurant.category }}</p>
-  {% empty %}
-    <p>お気に入り店舗はありません。</p>
-  {% endfor %}
-<br>
-<a href="{% url 'list' %}">← 店舗一覧に戻る</a>
+  <!-- 予約履歴 -->
+  <div class="mb-5">
+    <h4 class="fw-bold mb-3">予約履歴一覧</h4>
+
+    {% for reservation in reservations %}
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <p><strong>店舗名：</strong>{{ reservation.restaurant.name }}</p>
+          <p>📅 {{ reservation.date }} / ⏰ {{ reservation.time }}</p>
+          <p>👤 {{ reservation.number_of_people }} 人</p>
+
+          <a href="{% url 'reservation_delete' reservation.pk %}"
+             class="btn btn-outline-danger btn-sm">
+            キャンセル
+          </a>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">予約履歴はありません。</p>
+    {% endfor %}
+  </div>
+
+  <!-- お気に入り -->
+  <div class="mb-5">
+    <h4 class="fw-bold mb-3">お気に入り登録した店舗</h4>
+
+    <div class="row">
+      {% for favorite in favorites %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+
+            <img src="{{ favorite.restaurant.img.url }}"
+                 class="card-img-top"
+                 style="height:200px; object-fit:cover;">
+
+            <div class="card-body">
+              <h5 class="fw-bold">{{ favorite.restaurant.name }}</h5>
+              <p>💰 {{ favorite.restaurant.price }}</p>
+              <p>📍 {{ favorite.restaurant.address }}</p>
+              <p>🏷 {{ favorite.restaurant.category }}</p>
+            </div>
+
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">お気に入り店舗はありません。</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 戻る -->
+  <div class="text-center mb-5">
+    <a href="{% url 'list' %}" class="btn btn-outline-dark">
+      ← 店舗一覧に戻る
+    </a>
+  </div>
+
+</div>
 {% endblock %}

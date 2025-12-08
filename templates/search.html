@@ -1,20 +1,62 @@
 {% extends "base.html" %}
 {% block title %}検索結果{% endblock %}
 
-<body>
-  {% block main %}
+{% block main %}
+<div class="container mt-5">
 
-  <h1>「{{ query }}」の検索結果</h1>
+  <!-- タイトル -->
+  <h3 class="fw-bold mb-4">
+    「{{ query }}」の検索結果
+  </h3>
 
-  {% for restaurant in results %}
-  <p>{{ restaurant.name }}<p>
-  <p>{{ restaurant.price }}</p>
-  <img src="{{ restaurant.img.url }}" style="width:100px height:100px;">
-  <button class="btn btn-success" onclick="location.href='{% url 'detail' pk=restaurant.pk %}'">詳細</button>
-  <button class="btn btn-success" onclick="location.href='{% url 'reservation' restaurant_id=restaurant.pk %}'">予約</button>
-  {% empty %}
-  <p>該当する検索結果がありませんでした。</p>
-  {% endfor %}
-  <a href="{% url 'list' %}">戻る</a>
-  {% endblock %}
-</body>
+  <div class="row">
+
+    {% for restaurant in results %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+
+          <!-- 店舗画像 -->
+          <img src="{{ restaurant.img.url }}"
+               class="card-img-top"
+               style="height:220px; object-fit:cover;">
+
+          <div class="card-body d-flex flex-column">
+
+            <!-- 店名 -->
+            <h5 class="fw-bold">{{ restaurant.name }}</h5>
+
+            <!-- 価格 -->
+            <p class="text-muted mb-2">💰 ¥{{ restaurant.price }}</p>
+
+            <!-- ボタン -->
+            <div class="mt-auto d-flex justify-content-between gap-2">
+              <a href="{% url 'detail' pk=restaurant.pk %}"
+                 class="btn btn-outline-primary btn-sm w-50">
+                詳細
+              </a>
+
+              <a href="{% url 'reservation' restaurant_id=restaurant.pk %}"
+                 class="btn btn-outline-success btn-sm w-50">
+                予約
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    {% empty %}
+      <p class="text-muted">該当する検索結果がありませんでした。</p>
+    {% endfor %}
+
+  </div>
+
+  <!-- 戻る -->
+  <div class="text-center mt-4 mb-5">
+    <a href="{% url 'list' %}" class="btn btn-outline-dark">
+      ← 店舗一覧に戻る
+    </a>
+  </div>
+
+</div>
+{% endblock %}
