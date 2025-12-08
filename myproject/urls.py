@@ -37,6 +37,10 @@ urlpatterns = [
     path('account/password/',views.password_reset_view,name='password_reset'),
     path('reviews/<int:pk>/edit/',views.ReviewUpdateView.as_view(),name="review_update"),
     path('reviews/<int:pk>/delete/',views.ReviewDeleteView.as_view(),name="review_delete"),
+    path('create-checkout-session/',views.create_checkout_session,name='create-checkout-session'),
+    path('success/',views.success,name='success'),
+    path('cancel/',views.cancel,name='cancel'),
+    path('webhook/',views.stripe_webhook,name='stripe_webhook'),
 ]
 
 if settings.DEBUG:

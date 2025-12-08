@@ -1,13 +1,22 @@
+import json
+import stripe
 from django.shortcuts import render,get_object_or_404,redirect
 from django.views.generic import ListView,DetailView,DeleteView,UpdateView
 from .models import Restaurant,Category,Favorite,Reservation,Review
-from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
+from django.contrib.auth import authenticate,login,logout,update_session_auth_hash,get_user_model
 from .forms import SignupForm,LoginForm,ReviewForm,ReservationForm,SearchForm,UserEditForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import ReviewForm
+from django.conf import settings
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+stripe.api_key=settings.STRIPE_SECRET_KEY
+
+User=get_user_model()
 
 # Create your views here.
 class RestaurantListView(ListView):
@@ -215,10 +224,67 @@ def toggle_favorite(request, restaurant_id):
 @login_required
 def account_view(request):
     user=request.user
-    favorite=Favorite.objects.filter(user=user).select_related('restaurant')
+    favorites=Favorite.objects.filter(user=user).select_related('restaurant')
     reservation=Reservation.objects.filter(user=user).select_related('restaurant')
     return render(request, 'account.html', {
         'user': user,
-        'favorites': favorite,
+        'favorites': favorites,
         'reservations': reservation,
     })
+
+
+#stripe checkoutセッションを作成
+@login_required
+def create_checkout_session(request):
+    YOUR_DOMAIN = 'http://localhost:8000'  # 本番では本当のURLに変更
+
+    checkout_session = stripe.checkout.Session.create(
+        customer_email=request.user.email,  # Stripeに顧客を自動作成
+        payment_method_types=['card'],
+        line_items=[
+            {
+                'price': settings.STRIPE_PRICE_ID,
+                'quantity': 1,
+            },
+        ],
+        mode='subscription',
+        success_url=YOUR_DOMAIN + '/success/',
+        cancel_url=YOUR_DOMAIN + '/cancel/',
+    )
+    return redirect(checkout_session.url)
+
+def success(request):
+    return render(request,'success.html')
+
+def cancel(request):
+    return render(request,'cancel.html')
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+    try:
+        event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+    except (ValueError, stripe.error.SignatureVerificationError):
+        return HttpResponse(status=400)
+
+    print(f"✅ 受信イベントタイプ: {event['type']}")
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        customer_email = session.get("customer_email")
+        stripe_customer_id = session.get("customer")  # cus_XXXXXX
+
+        try:
+            user = User.objects.get(email=customer_email)
+            user.is_premium = True
+            user.stripe_customer_id = stripe_customer_id
+            user.save()
+            print(f"🎉 ユーザー {user.email} をプレミアムに更新しました")
+        except User.DoesNotExist:
+            print(f"⚠️ 該当ユーザーが見つかりません: {customer_email}")
+
+    return HttpResponse(status=200)

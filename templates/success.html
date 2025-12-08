@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}登録完了{% endblock %}
+
+{% block main %}
+<div class="container mt-5">
+    <div class="alert alert-success text-center">
+        <h2>プレミアムプランにご登録ありがとうございます！</h2>
+        <a href="{% url 'account' %}" class="btn btn-primary mt-3">戻る</a>
+    </div>
+</div>
+{% endblock %}

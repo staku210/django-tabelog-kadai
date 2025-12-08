@@ -8,6 +8,16 @@
 <a href="{% url 'user_edit' %}">アカウント情報を編集する</a><br>
 <a href="{% url 'password_reset' %}">パスワードをリセットする</a>
 
+{% if not user.is_premium %}
+  <p>現在は無料会員です。</p>
+  <form action="{% url 'create-checkout-session' %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">有料会員になる</button>
+  </form>
+{% else %}
+  <p>✅ あなたは有料会員です！</p>
+{% endif %}
+
 <h2>予約履歴一覧</h2>
 {% for reservation in reservations %}
   <div style="margin-bottom: 10px;">
@@ -22,7 +32,7 @@
 {% endfor %}
 
 <h2>お気に入り登録した店舗</h2>
-  {% for favorite in favorite %}
+  {% for favorite in favorites %}
     <p>{{ favorite.restaurant.name }}</p>
     <img src="{{ favorite.restaurant.img.url }}" style="width:100px height:100px;">
     <p>{{ favorite.restaurant.price }}</p>

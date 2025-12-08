@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}キャンセルされました{% endblock %}
+
+{% block main %}
+<div class="container mt-5">
+    <div class="alert alert-warning text-center">
+        <h2>サブスクリプション登録がキャンセルされました</h2>
+        <a href="{% url 'account' %}" class="btn btn-secondary mt-3">戻る</a>
+    </div>
+</div>
+{% endblock %}
