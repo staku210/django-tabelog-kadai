@@ -129,7 +129,14 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS=[BASE_DIR/'static']
 
 # Heroku静的ファイル対応
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ←一番上に近いところに追加
+    # 他のmiddleware...
+]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
