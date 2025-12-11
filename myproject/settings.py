@@ -131,11 +131,6 @@ STATICFILES_DIRS=[BASE_DIR/'static']
 # Heroku静的ファイル対応
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ←一番上に近いところに追加
-    # 他のmiddleware...
-]
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
