@@ -5,8 +5,8 @@ from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
 class RestaurantAdmin(admin.ModelAdmin):
-  list_display=('id','name','price','address','image','category')
-  search_fields=('name',)
+  list_display=('id','name','price','address','phone','description','image','category')
+  search_fields=('name','address','phone')
   list_filter=('category',)
 
   def image(self,obj):

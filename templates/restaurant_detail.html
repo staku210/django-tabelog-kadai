@@ -26,6 +26,8 @@
           <p>💰 <strong>予算：</strong>{{ restaurant.price }}</p>
           <p>📍 <strong>住所：</strong>{{ restaurant.address }}</p>
           <p>🏷 <strong>カテゴリ：</strong>{{ restaurant.category }}</p>
+          <p>☎ <strong>電話番号：</strong>{{ restaurant.phone }}</p>
+          <p><strong>説明：</strong> {{ restaurant.description }}</p>
 
           <div class="mt-auto">
             <a href="{% url 'reservation' restaurant_id=restaurant.pk %}"
