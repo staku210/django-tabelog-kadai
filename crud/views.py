@@ -216,7 +216,8 @@ def search_view(request):
         query = form.cleaned_data['query']
         results = Restaurant.objects.filter(
             Q(name__icontains=query)|
-            Q(category__name__icontains=query)
+            Q(category__name__icontains=query)|
+            Q(address__icontains=query)
         )
 
     return render(request, 'search.html', {
