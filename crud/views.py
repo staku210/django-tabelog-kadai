@@ -285,32 +285,54 @@ def cancel(request):
 
 @csrf_exempt
 def stripe_webhook(request):
+    import stripe
+    from django.http import HttpResponse
+
     payload = request.body
-    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
     endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
     try:
-        event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
-    except (ValueError, stripe.error.SignatureVerificationError):
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except Exception as e:
+        print("❌ Signature error:", e)
         return HttpResponse(status=400)
 
-    print(f"✅ 受信イベントタイプ: {event['type']}")
+    print("✅ Event type:", event["type"])
 
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        customer_email = session.get("customer_email")
-        stripe_customer_id = session.get("customer")  # cus_XXXXXX
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+
+        print("📌 session:", session)
+
+        # 重要：customer_email の取り方
+        customer_email = session.get("customer_details", {}).get("email")
+        print("📌 customer_email:", customer_email)
+
+        if not customer_email:
+            print("❌ customer_email が None です")
+            return HttpResponse(status=500)
 
         try:
             user = User.objects.get(email=customer_email)
+            print("📌 user found:", user)
+        except Exception as e:
+            print("❌ User lookup error:", e)
+            return HttpResponse(status=500)
+
+        try:
             user.is_premium = True
-            user.stripe_customer_id = stripe_customer_id
+            user.stripe_customer_id = session.get("customer")
             user.save()
-            print(f"🎉 ユーザー {user.email} をプレミアムに更新しました")
-        except User.DoesNotExist:
-            print(f"⚠️ 該当ユーザーが見つかりません: {customer_email}")
+            print("🎉 User updated to premium")
+        except Exception as e:
+            print("❌ User save error:", e)
+            return HttpResponse(status=500)
 
     return HttpResponse(status=200)
+
 
 
 @login_required
