@@ -26,11 +26,18 @@ class RestaurantListView(ListView):
 
   def get_queryset(self):
         queryset = super().get_queryset()
-        if self.request.user.is_authenticated:
-            # 各レストランに `is_favorited` フラグを追加
-            favorites = Favorite.objects.filter(user=self.request.user).values_list('restaurant_id', flat=True)
-            for restaurant in queryset:
-                restaurant.is_favorited = restaurant.id in favorites
+
+        user=self.request.user
+        if user.is_authenticated:
+            # お気に入りのレストランIDを取得
+            favorites = Favorite.objects.filter(user=user).values_list('restaurant_id', flat=True)
+        else:
+            #未ログイン時は空のリスト
+            favorites=[]
+        
+        #各レストランにフラグ追加
+        for restaurant in queryset:
+            restaurant.is_favorite=restaurant.id in favorites
         return queryset
 
   def get_context_data(self, **kwargs):
