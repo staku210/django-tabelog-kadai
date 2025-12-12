@@ -15,7 +15,7 @@ class Restaurant(models.Model):
   address=models.CharField(max_length=200)
   phone = models.CharField(max_length=20, blank=True)   # ← 追加
   description = models.TextField(blank=True) 
-  img=models.ImageField(upload_to='restaurant/', blank=True, default='noImage.png')
+  img=models.ImageField(upload_to='restaurant/', blank=True, null=True)
   category=models.ForeignKey(Category,on_delete=models.CASCADE,related_name='restaurants')
 
   def __str__(self):
