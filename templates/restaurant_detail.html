@@ -91,14 +91,14 @@
         {% csrf_token %}
 
         <div class="mb-3">
-          {{ form.rating.label_tag }}
-          {{ form.rating }}
-        </div>
+         <label for="id_rating" class="form-label">評価</label>
+         {{ form.rating }}
+       </div>
 
         <div class="mb-3">
-          {{ form.comment.label_tag }}
-          {{ form.comment }}
-        </div>
+         <label for="id_comment" class="form-label">レビュー内容</label>
+         {{ form.comment }}
+       </div>
 
         {% if form.errors %}
           <div class="alert alert-danger">

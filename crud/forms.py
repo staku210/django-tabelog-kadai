@@ -23,6 +23,24 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['rating', 'comment']
+        labels = {
+            'rating': '評価（1〜5）',
+            'comment': 'レビュー内容',
+        }
+        widgets = {
+            'rating': forms.Select(
+                attrs={'class': 'form-select'},
+                choices=[(i, f"{i} ★") for i in range(1, 6)]
+            ),
+            'comment': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'rows': 4,
+                    'placeholder': 'レビュー内容を入力してください（例：料理が美味しかったです）'
+                }
+            ),
+        }
+
 
 class ReservationForm(forms.ModelForm):
     class Meta:
