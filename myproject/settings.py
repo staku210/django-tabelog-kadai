@@ -144,7 +144,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS=[BASE_DIR/'static']
+#STATICFILES_DIRS=[BASE_DIR/'static']
 
 # Heroku静的ファイル対応
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
